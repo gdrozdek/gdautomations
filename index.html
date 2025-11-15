@@ -1,41 +1,742 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>GD.Automations – Strona w budowie</title>
-
+    <meta charset="UTF-8">
+    <title>GD.Automations – Automatyzacje Excel / Python / SQL</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Automatyzacje Excel / Python / SQL dla firm. Porządkujemy procesy, raporty i dane – nawet jeśli nie masz działu IT.">
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background: #0d0d0d;
-            color: white;
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            text-align: center;
+        :root {
+            --bg-body: #0b1020;
+            --bg-header-top: #050714;
+            --bg-header-main: #0f1528;
+            --bg-card: #141a30;
+            --bg-card-soft: #181f38;
+            --accent: #19b5ff;
+            --accent2: #8b5cf6;
+            --text-main: #f9fafb;
+            --text-muted: #9ca3af;
+            --border-subtle: #1f2937;
+            --radius-lg: 14px;
+            --radius-sm: 8px;
+            --shadow-soft: 0 18px 45px rgba(0,0,0,0.65);
         }
 
-        h1 {
-            font-size: 36px;
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: radial-gradient(circle at top left, #1e293b 0, #020617 45%, #000 100%);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        a { color: inherit; text-decoration: none; }
+
+        /* Górny pasek kontaktowy */
+
+        .topbar {
+            background: var(--bg-header-top);
+            border-bottom: 1px solid var(--border-subtle);
+            font-size: 0.85rem;
+        }
+
+        .topbar-inner {
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 6px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            color: var(--text-muted);
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .topbar-left span {
+            padding: 2px 8px;
+            border-radius: 999px;
+            background: rgba(24, 199, 255, 0.08);
+            color: var(--accent);
+            font-weight: 500;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        /* Header główny */
+
+        header {
+            background: rgba(15, 23, 42, 0.98);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-subtle);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .header-inner {
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 10px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+        }
+
+        .logo-wrap {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-mark {
+            width: 36px;
+            height: 36px;
+            border-radius: 12px;
+            background: radial-gradient(circle at 20% 0, var(--accent) 0, var(--accent2) 40%, #020617 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 0.95rem;
+            letter-spacing: 0.04em;
+        }
+
+        .logo-text-main {
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .logo-text-sub {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 18px;
+            font-size: 0.9rem;
+        }
+        nav a {
+            padding: 6px 10px;
+            border-radius: 999px;
+            color: var(--text-muted);
+        }
+        nav a:hover,
+        nav a.active {
+            background: rgba(24, 199, 255, 0.12);
+            color: var(--accent);
+        }
+
+        .header-cta {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .btn,
+        .btn-outline {
+            border-radius: 999px;
+            padding: 8px 16px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            color: #fff;
+            box-shadow: 0 10px 30px rgba(24, 199, 255, 0.35);
+        }
+        .btn:hover {
+            filter: brightness(1.05);
+        }
+        .btn-outline {
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--border-subtle);
+        }
+        .btn-outline:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* Główna zawartość */
+
+        .page {
+            max-width: 1180px;
+            margin: 24px auto 40px;
+            padding: 0 18px 40px;
+            display: grid;
+            grid-template-columns: minmax(0, 2.1fr) minmax(0, 1fr);
+            gap: 24px;
+        }
+
+        /* HERO */
+
+        .hero {
+            grid-column: 1 / -1;
+            display: grid;
+            grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+            gap: 20px;
+            background: radial-gradient(circle at 0 0, rgba(24,199,255,0.15) 0, transparent 50%), var(--bg-card);
+            border-radius: 20px;
+            padding: 26px 26px 22px;
+            box-shadow: var(--shadow-soft);
+            border: 1px solid rgba(148, 163, 184, 0.25);
+        }
+
+        .hero-main h1 {
+            font-size: 1.9rem;
+            margin-bottom: 8px;
+        }
+        .hero-main h1 span {
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        .hero-main p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 16px;
+        }
+        .hero-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        .hero-badges span {
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: rgba(15,23,42,0.8);
+            border: 1px solid rgba(148,163,184,0.4);
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .hero-note {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* Prawa część hero – pseudo dashboard */
+
+        .hero-dashboard {
+            background: radial-gradient(circle at top, rgba(139,92,246,0.4), transparent 60%);
+            border-radius: 18px;
+            padding: 14px 14px 12px;
+            border: 1px solid rgba(148, 163, 184, 0.4);
+            display: grid;
+            grid-template-rows: auto auto;
+            gap: 10px;
+        }
+
+        .hero-dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .hero-dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .mini-card {
+            background: rgba(15, 23, 42, 0.92);
+            border-radius: 12px;
+            padding: 8px 9px;
+            border: 1px solid rgba(30,64,175,0.7);
+            font-size: 0.75rem;
+        }
+
+        .mini-card h3 {
+            font-size: 0.8rem;
+            margin-bottom: 3px;
+        }
+
+        .mini-value {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+
+        .mini-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+        /* Karty w kolumnie głównej */
+
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 18px 18px 16px;
+            box-shadow: var(--shadow-soft);
+            border: 1px solid rgba(148, 163, 184, 0.35);
+            margin-bottom: 18px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
             margin-bottom: 10px;
         }
 
-        p {
-            font-size: 20px;
-            opacity: 0.8;
+        .card-header h2 {
+            font-size: 1.05rem;
+        }
+
+        .card-header span {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .pill {
+            font-size: 0.75rem;
+            padding: 4px 9px;
+            border-radius: 999px;
+            background: rgba(15,23,42,0.9);
+            border: 1px solid rgba(148,163,184,0.4);
+            color: var(--text-muted);
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 10px;
+        }
+
+        .service-item {
+            background: var(--bg-card-soft);
+            border-radius: var(--radius-sm);
+            padding: 10px 11px;
+            border: 1px solid rgba(31, 41, 55, 0.9);
+            font-size: 0.85rem;
+        }
+
+        .service-item h3 {
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+        }
+
+        .service-meta {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 6px;
+        }
+
+        .case-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            font-size: 0.85rem;
+        }
+
+        .case-item {
+            background: var(--bg-card-soft);
+            border-radius: var(--radius-sm);
+            padding: 8px 10px;
+            border: 1px solid rgba(31, 41, 55, 0.9);
+        }
+
+        .case-title {
+            font-weight: 500;
+            margin-bottom: 3px;
+        }
+
+        .case-tags {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* Sidebar */
+
+        .sidebar-section {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 16px 16px 14px;
+            box-shadow: var(--shadow-soft);
+            border: 1px solid rgba(148, 163, 184, 0.35);
+            margin-bottom: 16px;
+            font-size: 0.9rem;
+        }
+
+        .sidebar-section h3 {
+            font-size: 0.95rem;
+            margin-bottom: 6px;
+        }
+
+        .sidebar-section p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .sidebar-list {
+            list-style: none;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        .sidebar-list li {
+            padding: 3px 0;
+        }
+
+        .sidebar-highlight {
+            background: linear-gradient(135deg, rgba(24,199,255,0.15), rgba(139,92,246,0.20));
+            border-radius: var(--radius-sm);
+            padding: 8px 9px;
+            font-size: 0.8rem;
+        }
+
+        /* Formularz kontaktowy (wersja mini) */
+
+        .contact-mini form {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .contact-mini input,
+        .contact-mini textarea {
+            width: 100%;
+            border-radius: 8px;
+            border: 1px solid rgba(55, 65, 81, 0.9);
+            padding: 7px 8px;
+            background: #020617;
+            color: var(--text-main);
+            font-size: 0.8rem;
+        }
+        .contact-mini textarea {
+            min-height: 70px;
+            resize: vertical;
+        }
+
+        .contact-mini small {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+        /* Stopka */
+
+        footer {
+            border-top: 1px solid var(--border-subtle);
+            background: #020617;
+            padding: 14px 18px 18px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .footer-inner {
+            max-width: 1180px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        /* Responsywność */
+
+        @media (max-width: 900px) {
+            .page {
+                grid-template-columns: minmax(0, 1fr);
+            }
+            .hero {
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
+
+        @media (max-width: 720px) {
+            nav ul {
+                display: none;
+            }
+            .header-inner {
+                flex-wrap: wrap;
+                justify-content: space-between;
+            }
+            .hero-main h1 {
+                font-size: 1.6rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .topbar-inner {
+                flex-direction: column;
+                align-items: flex-start;
+            }
         }
     </style>
 </head>
-
 <body>
-    <div>
-        <h1>GD.Automations</h1>
-        <p>Strona w przygotowaniu</p>
+
+    <!-- Górny pasek -->
+    <div class="topbar">
+        <div class="topbar-inner">
+            <div class="topbar-left">
+                <span>GD.Automations</span>
+                <div>Automatyzacje Excel / Python / SQL dla firm – bez działu IT</div>
+            </div>
+            <div class="topbar-right">
+                <div>📧 <a href="mailto:kontakt@gdautomations.pl">kontakt@gdautomations.pl</a></div>
+                <div>📞 +48 600 000 000</div>
+            </div>
+        </div>
     </div>
+
+    <!-- Header z logo i menu -->
+    <header>
+        <div class="header-inner">
+            <div class="logo-wrap">
+                <div class="logo-mark">GD</div>
+                <div>
+                    <div class="logo-text-main">GD.Automations</div>
+                    <div class="logo-text-sub">Porządkuję i automatyzuję pracę z danymi</div>
+                </div>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#" class="active">Strona główna</a></li>
+                    <li><a href="#oferta">Oferta</a></li>
+                    <li><a href="#case">Case study</a></li>
+                    <li><a href="#o-mnie">O mnie</a></li>
+                    <li><a href="#kontakt">Kontakt</a></li>
+                </ul>
+            </nav>
+            <div class="header-cta">
+                <button class="btn-outline">Zobacz przykłady</button>
+                <button class="btn" onclick="document.getElementById('kontakt').scrollIntoView({behavior:'smooth'});">
+                    Umów rozmowę
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Główna zawartość -->
+    <main class="page">
+
+        <!-- HERO -->
+        <section class="hero">
+            <div class="hero-main">
+                <h1>
+                    Automatyzacje <span>Excel / Python / SQL</span> dla firm – bez działu IT
+                </h1>
+                <p>
+                    Pomagam uporządkować procesy, raporty i dane w Twojej firmie tak,
+                    aby ludzie przestali przepisywać tabelki, a zaczęli pracować na wynikach.
+                </p>
+
+                <div class="hero-badges">
+                    <span>Excel + VBA</span>
+                    <span>Python (roboty klikające / integracje)</span>
+                    <span>Proste bazy danych / raporty</span>
+                    <span>Rozwiązania offline</span>
+                </div>
+
+                <div class="hero-actions">
+                    <button class="btn" onclick="document.getElementById('kontakt').scrollIntoView({behavior:'smooth'});">
+                        Opisz swój proces &rarr;
+                    </button>
+                    <button class="btn-outline">
+                        Zobacz przykładowe automatyzacje
+                    </button>
+                </div>
+                <div class="hero-note">
+                    Już w kilka dni możesz mieć gotowe narzędzie zamiast kolejnego „tymczasowego Excela”.
+                </div>
+            </div>
+
+            <aside class="hero-dashboard" aria-hidden="true">
+                <div class="hero-dashboard-header">
+                    <div>Panel automatyzacji</div>
+                    <div style="font-size:0.7rem;">Przykładowe efekty</div>
+                </div>
+                <div class="hero-dashboard-grid">
+                    <div class="mini-card">
+                        <h3>Raport Excel &rarr; PDF</h3>
+                        <div class="mini-label">Czas przygotowania raportu dziennego</div>
+                        <div class="mini-value">45 min &rarr; 3 min</div>
+                        <div class="mini-label">Automatyzacja VBA + Python</div>
+                    </div>
+                    <div class="mini-card">
+                        <h3>Import z systemu web</h3>
+                        <div class="mini-label">Ręczne przepisywanie danych</div>
+                        <div class="mini-value">1200 wierszy &rarr; 0 kliknięć</div>
+                        <div class="mini-label">Robot przeglądarkowy</div>
+                    </div>
+                    <div class="mini-card">
+                        <h3>Statusy przesyłek</h3>
+                        <div class="mini-label">Sprawdzanie w wielu oknach</div>
+                        <div class="mini-value">1h &rarr; 5 min</div>
+                        <div class="mini-label">Jedno zbiorcze zestawienie</div>
+                    </div>
+                    <div class="mini-card">
+                        <h3>Powiadomienia SMS/mail</h3>
+                        <div class="mini-label">Ręczne powiadamianie klientów</div>
+                        <div class="mini-value">+ automatyczne wysyłki</div>
+                        <div class="mini-label">Na podstawie danych z Excela</div>
+                    </div>
+                </div>
+            </aside>
+        </section>
+
+        <!-- KOLUMNA GŁÓWNA -->
+        <div>
+
+            <!-- Oferta / co robię -->
+            <section class="card" id="oferta">
+                <div class="card-header">
+                    <h2>Co robię w praktyce</h2>
+                    <span>Automatyzacje, integracje, raporty</span>
+                </div>
+                <div class="services-grid">
+                    <article class="service-item">
+                        <h3>Automatyzacje w Excelu i VBA</h3>
+                        <p>Makra, które zastępują powtarzalne klikanie: zbiory raportów,
+                           importy plików, generowanie zestawień dla szefa.</p>
+                        <div class="service-meta">Przykład: z 3h pracy dziennie do 15 minut.</div>
+                    </article>
+                    <article class="service-item">
+                        <h3>Skrypty Python dla danych z systemów</h3>
+                        <p>Pobieranie danych z systemów webowych (bez API), czyszczenie i eksport
+                           do Excela lub bazy danych.</p>
+                        <div class="service-meta">Dla systemów, z których „nie da się nic wyciągnąć”.</div>
+                    </article>
+                    <article class="service-item">
+                        <h3>Proste bazy danych + SQL</h3>
+                        <p>Układam dane w tabele, tak aby raporty były powtarzalne,
+                           a nie „za każdym razem od nowa”.</p>
+                        <div class="service-meta">Fundament pod raporty i rozwój.</div>
+                    </article>
+                    <article class="service-item">
+                        <h3>Dashboardy i raporty dla zarządu</h3>
+                        <p>Czytelne podsumowania, które biorą dane z wielu plików i systemów,
+                           a prezentują je w jednym miejscu.</p>
+                        <div class="service-meta">Excel, PDF lub inne wygodne formaty.</div>
+                    </article>
+                </div>
+            </section>
+
+            <!-- Case study -->
+            <section class="card" id="case">
+                <div class="card-header">
+                    <h2>Przykładowe automatyzacje (case study)</h2>
+                    <span>Opiszę tu konkretne przykłady z Twojej praktyki</span>
+                </div>
+                <div class="case-list">
+                    <article class="case-item">
+                        <div class="case-title">Automatyczne przypisywanie zleceń kurierom w Excelu</div>
+                        <div class="case-tags">Excel + VBA • logistyka / rejonizacja • oszczędność czasu dyspozytora</div>
+                        <p>Makro, które na podstawie prostych zasad przypisuje zlecenia
+                           do rejonów i kierowców, przygotowuje wydruki / listy na trasę
+                           i generuje gotowe wiadomości SMS.</p>
+                    </article>
+                    <article class="case-item">
+                        <div class="case-title">Robot sprawdzający statusy przesyłek w systemie web</div>
+                        <div class="case-tags">Python + przeglądarka • odczyt statusów • raport dla działu operacji</div>
+                        <p>Skrypt automatycznie loguje się do systemu, sprawdza statusy
+                           wielu numerów przesyłek i wpisuje wynik do Excela – zielony / czerwony,
+                           data, opis zdarzenia.</p>
+                    </article>
+                    <article class="case-item">
+                        <div class="case-title">Archiwizacja dziennych raportów w jednym pliku</div>
+                        <div class="case-tags">Excel • konsolidacja plików • raport miesięczny</div>
+                        <p>Rozwiązanie zbiera dzienne pliki Excela z folderu, liczy ilości, sumy
+                           i przygotowuje podsumowanie miesiąca. Bez ręcznego kopiowania.</p>
+                    </article>
+                </div>
+            </section>
+
+        </div>
+
+        <!-- SIDEBAR -->
+        <aside>
+
+            <section class="sidebar-section sidebar-highlight">
+                <h3>Szybka konsultacja 30 min</h3>
+                <p>Masz proces, który „zjada” czas zespołu? Opisz go w kilku zdaniach,
+                   a powiem Ci szczerze, co da się zautomatyzować.</p>
+                <button class="btn" style="width:100%;margin-top:6px;"
+                        onclick="document.getElementById('kontakt').scrollIntoView({behavior:'smooth'});">
+                    Napisz do mnie
+                </button>
+            </section>
+
+            <section class="sidebar-section">
+                <h3>Dla kogo są te rozwiązania?</h3>
+                <ul class="sidebar-list">
+                    <li>• Małe i średnie firmy bez działu IT</li>
+                    <li>• Działy operacyjne, logistyka, transport</li>
+                    <li>• Administracja, biuro, finanse</li>
+                    <li>• Większe firmy – projekty pilotażowe</li>
+                </ul>
+            </section>
+
+            <section class="sidebar-section">
+                <h3>Jak pracuję?</h3>
+                <p>Prosty, 3-krokowy proces:</p>
+                <ul class="sidebar-list">
+                    <li>1. Krótka rozmowa + przykładowe pliki</li>
+                    <li>2. Propozycja rozwiązania + wycena</li>
+                    <li>3. Wdrożenie, testy i prosta instrukcja</li>
+                </ul>
+            </section>
+
+            <section class="sidebar-section contact-mini" id="kontakt">
+                <h3>Kontakt</h3>
+                <p>Wypełnij krótki formularz – odezwę się mailowo.</p>
+                <form>
+                    <input type="text" name="name" placeholder="Imię i nazwisko">
+                    <input type="email" name="email" placeholder="Adres e-mail">
+                    <textarea name="message" placeholder="Opisz krótko proces, który chcesz usprawnić"></textarea>
+                    <small>Zgoda RODO: dane wykorzystam wyłącznie, aby odpowiedzieć na Twoją wiadomość.</small>
+                    <button type="button" class="btn" style="margin-top:4px;">Wyślij (makieta)</button>
+                </form>
+            </section>
+
+        </aside>
+
+    </main>
+
+    <!-- Stopka -->
+    <footer>
+        <div class="footer-inner">
+            <div>© <span id="year"></span> GD.Automations – Grzegorz Drozdek. Wszystkie prawa zastrzeżone.</div>
+            <div>Polityka prywatności • RODO (do uzupełnienia)</div>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('year').textContent = new Date().getFullYear();
+    </script>
 </body>
 </html>
-
